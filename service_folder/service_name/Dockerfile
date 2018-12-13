@@ -1,0 +1,60 @@
+FROM {{DOCKERFILE_BASE_IMAGE}}
+
+ENV SINGNET_REPOS=/opt/singnet
+ENV GH_REPO_NAME={{GITHUB_REPOSITORY}}
+ENV SERVICE_FOLDER=${SINGNET_REPOS}/${GH_REPO_NAME}/{{SERVICE_FOLDER}}
+ENV SERVICE_NAME={{SERVICE_NAME}}
+ENV SNETD_PORT={{SERVICE_DAEMON_PORT}}
+ENV SNETD_CONFIG=snetd.config.json
+
+RUN mkdir -p ${SINGNET_REPOS}
+
+RUN apt-get update && \
+    apt-get install -y \
+    git \
+    wget \
+    nano \
+    libudev-dev \
+    libusb-1.0-0-dev
+
+RUN apt-get install -y python3 python3-pip
+RUN apt-get install -y nodejs npm
+
+RUN cd ${SINGNET_REPOS} && \
+    git clone https://github.com/singnet/snet-cli && \
+    cd snet-cli && \
+    ./scripts/blockchain install && \
+    pip3.6 install -e .
+
+RUN cd ${SINGNET_REPOS} && \
+    mkdir snet-daemon && \
+    cd snet-daemon && \
+    wget https://github.com/singnet/snet-daemon/releases/download/v{{SNETD_VERSION}}/snetd-{{SNETD_VERSION}}.tar.gz && \
+    tar -xvf snetd-{{SNETD_VERSION}}.tar.gz && \
+    mv linux-amd64/snetd /usr/bin/snetd
+
+RUN cd ${SINGNET_REPOS} && \
+    git clone https://github.com/{{GITHUB_ACCOUNT}}/{{GITHUB_REPOSITORY}}.git
+
+RUN cd ${SERVICE_FOLDER}/${SERVICE_NAME} && \
+    sh -c "echo '{ \"DAEMON_END_POINT\": \"http://54.203.198.53:${SNETD_PORT}\", \
+                   \"ETHEREUM_JSON_RPC_ENDPOINT\": \"https://kovan.infura.io\", \
+                   \"IPFS_END_POINT\": \"http://ipfs.singularitynet.io:80\", \
+                   \"REGISTRY_ADDRESS_KEY\": \"{{REGISTRY_ADDRESS}}\", \
+                   \"PASSTHROUGH_ENABLED\": true, \
+                   \"PASSTHROUGH_ENDPOINT\": \"http://localhost:7003\", \
+                   \"ORGANIZATION_NAME\": \"snet\", \
+                   \"SERVICE_NAME\": \"${SERVICE_NAME}\", \
+                   \"LOG\": { \
+                   \"LEVEL\": \"debug\", \
+                   \"OUTPUT\": { \
+                       \"TYPE\": \"stdout\" \
+                       } \
+                   } \
+                }'" > ${SNETD_CONFIG}
+
+RUN cd ${SERVICE_FOLDER}/${SERVICE_NAME} && \
+    pip3 install -r requirements.txt && \
+    sh buildproto.sh
+
+WORKDIR ${SERVICE_FOLDER}/${SERVICE_NAME}

@@ -1,0 +1,42 @@
+version: 2
+jobs:
+  deploy-{{SERVICE_NAME}}:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
+    environment:
+      SERVICE_NAME: {{SERVICE_NAME}}
+      SERVICE_RUN_SCRIPT: {{SERVICE_RUN_SCRIPT}}
+      SERVICE_TEST_SCRIPT: {{SERVICE_TEST_SCRIPT}}
+      SNETD_PORT: {{SERVICE_DAEMON_PORT}}
+    steps:
+      - run:
+          name: Deploy Over SSH
+          command: |
+            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
+              nvidia-docker stop $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_NAME}} || true && nvidia-docker rename $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_NAME}} ${DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_NAME}}}_old || true
+              nvidia-docker build \
+                -t $DOCKER_IMAGE_NAME_{{SERVICE_DOCKER_NAME}} https://github.com/singnet/time-series-analysis.git#master:/{{SERVICE_FOLDER}}/$SERVICE_NAME
+              nvidia-docker run --runtime=nvidia \
+                --name $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_NAME}} \
+                --restart unless-stopped \
+                -p $SNETD_PORT:$SNETD_PORT \
+                -di $DOCKER_IMAGE_NAME_{{SERVICE_DOCKER_NAME}} sh -c "git pull;python3 $SERVICE_RUN_SCRIPT"
+            EOF
+      - run:
+          name: Remove Old Docker Container
+          command: |
+            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
+              nvidia-docker stop ${DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_NAME}}}_old || true && nvidia-docker rm ${DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_NAME}}}_old || true
+            EOF
+      - run:
+          name: Test local
+          command: |
+            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
+              nvidia-docker exec -i $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_NAME}} python3 $SERVICE_TEST_SCRIPT auto
+            EOF
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - deploy-{{SERVICE_NAME}}
