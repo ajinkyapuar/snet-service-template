@@ -27,7 +27,7 @@ class MyServiceServicer(grpc_bt_grpc.MyServiceServicer):
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
     # context: object that provides RPC-specific information (timeout, etc).
-    def forecast(self, request, context):
+    def my_service_method(self, request, context):
 
         try:
             # In our case, request is a Input() object (from .proto file)

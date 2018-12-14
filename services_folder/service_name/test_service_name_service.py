@@ -31,10 +31,10 @@ if __name__ == "__main__":
         if param_1 == "":
             param_1 = "my_input"
 
-        if grpc_method == "forecast":
-            stub = grpc_bt_grpc.ForecastStub(channel)
+        if grpc_method == "my_method":
+            stub = grpc_bt_grpc.MyServiceStub(channel)
             request = grpc_bt_pb2.Input(param_1=param_1)
-            response = stub.forecast(request)
+            response = stub.my_method(request)
             print("\nresponse:")
             print("response_1: {}".format(response.response_1))
         else:
