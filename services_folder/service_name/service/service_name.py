@@ -2,7 +2,7 @@
 import logging
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger("{{SERVICE_NAME}}")
+log = logging.getLogger("{{SERVICE_FILE_NAME}}")
 
 
 class MyServiceClass:

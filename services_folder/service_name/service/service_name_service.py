@@ -5,14 +5,14 @@ import grpc
 import concurrent.futures as futures
 
 import service.common
-from service.{{SERVICE_NAME}} import MyServiceClass
+from service.{{SERVICE_FILE_NAME}} import MyServiceClass
 
 # Importing the generated codes from buildproto.sh
-import service.service_spec.{{SERVICE_NAME}}_pb2_grpc as grpc_bt_grpc
-from service.service_spec.{{SERVICE_NAME}}_pb2 import Output
+import service.service_spec.{{SERVICE_FILE_NAME}}_pb2_grpc as grpc_bt_grpc
+from service.service_spec.{{SERVICE_FILE_NAME}}_pb2 import Output
 
 logging.basicConfig(level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger("{{SERVICE_NAME}}_service")
+log = logging.getLogger("{{SERVICE_FILE_NAME}}_service")
 
 
 # Create a class to be added to the gRPC server

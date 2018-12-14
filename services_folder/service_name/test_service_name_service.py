@@ -2,8 +2,8 @@ import sys
 import grpc
 
 # import the generated classes
-import service.service_spec.{{SERVICE_NAME}}_pb2_grpc as grpc_bt_grpc
-import service.service_spec.{{SERVICE_NAME}}_pb2 as grpc_bt_pb2
+import service.service_spec.{{SERVICE_FILE_NAME}}_pb2_grpc as grpc_bt_grpc
+import service.service_spec.{{SERVICE_FILE_NAME}}_pb2 as grpc_bt_pb2
 
 from service import registry
 
@@ -16,9 +16,9 @@ if __name__ == "__main__":
                 test_flag = True
 
         # Service ONE - Arithmetic
-        endpoint = input("Endpoint (localhost:{}): ".format(registry["{{SERVICE_NAME}}_service"]["grpc"])) if not test_flag else ""
+        endpoint = input("Endpoint (localhost:{}): ".format(registry["{{SERVICE_FILE_NAME}}_service"]["grpc"])) if not test_flag else ""
         if endpoint == "":
-            endpoint = "localhost:{}".format(registry["{{SERVICE_NAME}}_service"]["grpc"])
+            endpoint = "localhost:{}".format(registry["{{SERVICE_FILE_NAME}}_service"]["grpc"])
 
         # Open a gRPC channel
         channel = grpc.insecure_channel("{}".format(endpoint))

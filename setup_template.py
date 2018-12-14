@@ -25,7 +25,6 @@ def main():
 		if ".git" not in filename:
 			file_list.append(filename)
 
-	print(file_list)
 	tag_dict = dict()
 	for i, file_name in enumerate(file_list):
 
