@@ -36,7 +36,7 @@ if __name__ == "__main__":
             request = grpc_bt_pb2.Input(param_1=param_1)
             response = stub.forecast(request)
             print("\nresponse:")
-            print("response_1           : {}".format(response.response_1))
+            print("response_1: {}".format(response.response_1))
         else:
             print("Invalid method!")
             exit(1)

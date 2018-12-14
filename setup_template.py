@@ -22,7 +22,7 @@ def main():
 		if __file__ not in filename:
 			file_list.append(filename)
 	for filename in glob.iglob('.**/*', recursive=True):
-		if ".git" not in filename:
+		if ".git/" not in filename:
 			file_list.append(filename)
 
 	tag_dict = dict()
@@ -58,7 +58,7 @@ def main():
 
 			t = Template(content)
 			new_content = t.render(**tag_dict)
-			with open(dest_file_name, "w+") as f_out:
+			with open(dest_file_name, "w") as f_out:
 				f_out.write(new_content)
 	return
 

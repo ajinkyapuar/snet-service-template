@@ -6,8 +6,8 @@ jobs:
     working_directory: ~/singnet
     environment:
       SERVICE_NAME: {{SERVICE_NAME}}
-      SERVICE_RUN_SCRIPT: {{SERVICE_RUN_SCRIPT}}
-      SERVICE_TEST_SCRIPT: {{SERVICE_TEST_SCRIPT}}
+      SERVICE_RUN_SCRIPT: run_{{SERVICE_FILE_NAME}}_service.py
+      SERVICE_TEST_SCRIPT: test_{{SERVICE_FILE_NAME}}_service.py
       SNETD_PORT: {{SERVICE_DAEMON_PORT}}
     steps:
       - run:

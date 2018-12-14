@@ -82,7 +82,7 @@ $ sh buildproto.sh
 ```
 Start the service and `SNET Daemon`:
 ```
-$ python3 {{SERVICE_RUN_SCRIPT}}
+$ python3 run_{{SERVICE_FILE_NAME}}_service.py
 ```
 
 ### Calling the service:
@@ -93,7 +93,7 @@ Inputs:
 Local (testing purpose):
 
 ```
-$ python3 {{SERVICE_TEST_SCRIPT}}
+$ python3 test_{{SERVICE_FILE_NAME}}_service.py
 {{SERVICE_TEST_SCRIPT_CONSOLE_INPUTS}}
 
 {{SERVICE_TEST_SCRIPT_CONSOLE_OUTPUTS}}
