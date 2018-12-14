@@ -16,7 +16,7 @@ jobs:
             ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
               nvidia-docker stop $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}} || true && nvidia-docker rename $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}} ${DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}}}_old || true
               nvidia-docker build \
-                -t $DOCKER_IMAGE_NAME_{{SERVICE_DOCKER_LASTNAME}} https://github.com/singnet/time-series-analysis.git#master:/{{SERVICE_FOLDER}}/$SERVICE_NAME
+                -t $DOCKER_IMAGE_NAME_{{SERVICE_DOCKER_LASTNAME}} https://github.com/singnet/time-series-analysis.git#master:/{{SERVICES_FOLDER}}/$SERVICE_NAME
               nvidia-docker run --runtime=nvidia \
                 --name $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}} \
                 --restart unless-stopped \

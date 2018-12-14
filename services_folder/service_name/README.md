@@ -22,7 +22,7 @@ Clone this repository:
 
 ```
 $ git clone https://github.com/{{GITHUB_ACCOUNT}}/{{GITHUB_REPOSITORY}}.git
-$ cd {{SERVICE_FOLDER}}/{{SERVICE_NAME}}
+$ cd {{SERVICES_FOLDER}}/{{SERVICE_NAME}}
 ```
 
 ### Running the service:
@@ -101,7 +101,7 @@ $ python3 {{SERVICE_TEST_SCRIPT}}
 
   {{SERVICE_OUTPUT_DESCRIPTION_LIST}}
 
-For further instructions about the output of this service, check the [User's Guide](../../docs/users_guide/{{SERVICE_FOLDER}}/{{SERVICE_NAME}}.md).
+For further instructions about the output of this service, check the [User's Guide](../../docs/users_guide/{{SERVICES_FOLDER}}/{{SERVICE_NAME}}.md).
 
 Through SingularityNET (follow this [link](https://github.com/singnet/wiki/blob/master/tutorials/howToPublishService/README.md) 
 to learn how to publish a service and open a payment channel to be able to call it):

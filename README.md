@@ -15,9 +15,9 @@
 
 For more details on how to publish and test a service, select it from the list below:
 
-### {{SERVICE_FOLDER}}:
-- [{{SERVICE_NAME}}]({{SERVICE_FOLDER}}/{{SERVICE_NAME}}) 
-([User's Guide](docs/users_guide/{{SERVICE_FOLDER}}/{{SERVICE_NAME}}.md)) - {{SERVICE_DESCRIPTION}}
+### {{SERVICES_FOLDER}}:
+- [{{SERVICE_NAME}}]({{SERVICES_FOLDER}}/{{SERVICE_NAME}}) 
+([User's Guide](docs/users_guide/{{SERVICES_FOLDER}}/{{SERVICE_NAME}}.md)) - {{SERVICE_DESCRIPTION}}
 [[Reference]({{SERVICE_REFERENCE_LINK}})].
 
 ## Contributing and Reporting Issues

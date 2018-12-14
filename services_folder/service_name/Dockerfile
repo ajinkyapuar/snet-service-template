@@ -2,7 +2,7 @@ FROM {{DOCKERFILE_BASE_IMAGE}}
 
 ENV SINGNET_REPOS=/opt/singnet
 ENV GH_REPO_NAME={{GITHUB_REPOSITORY}}
-ENV SERVICE_FOLDER=${SINGNET_REPOS}/${GH_REPO_NAME}/{{SERVICE_FOLDER}}
+ENV SERVICES_FOLDER=${SINGNET_REPOS}/${GH_REPO_NAME}/{{SERVICES_FOLDER}}
 ENV SERVICE_NAME={{SERVICE_NAME}}
 ENV SNETD_PORT={{SERVICE_DAEMON_PORT}}
 ENV SNETD_CONFIG=snetd.config.json
@@ -36,7 +36,7 @@ RUN cd ${SINGNET_REPOS} && \
 RUN cd ${SINGNET_REPOS} && \
     git clone https://github.com/{{GITHUB_ACCOUNT}}/{{GITHUB_REPOSITORY}}.git
 
-RUN cd ${SERVICE_FOLDER}/${SERVICE_NAME} && \
+RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
     sh -c "echo '{ \"DAEMON_END_POINT\": \"http://54.203.198.53:${SNETD_PORT}\", \
                    \"ETHEREUM_JSON_RPC_ENDPOINT\": \"https://kovan.infura.io\", \
                    \"IPFS_END_POINT\": \"http://ipfs.singularitynet.io:80\", \
@@ -53,8 +53,8 @@ RUN cd ${SERVICE_FOLDER}/${SERVICE_NAME} && \
                    } \
                 }'" > ${SNETD_CONFIG}
 
-RUN cd ${SERVICE_FOLDER}/${SERVICE_NAME} && \
+RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
     pip3 install -r requirements.txt && \
     sh buildproto.sh
 
-WORKDIR ${SERVICE_FOLDER}/${SERVICE_NAME}
+WORKDIR ${SERVICES_FOLDER}/${SERVICE_NAME}
