@@ -38,14 +38,14 @@ RUN cd ${SINGNET_REPOS} && \
     git clone https://github.com/{{GITHUB_ACCOUNT}}/{{GITHUB_REPOSITORY}}.git
 
 RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
-    sh -c "echo '{ \"DAEMON_END_POINT\": \"http://${${SNETD_PORT}}:${SNETD_PORT}\", \
+    sh -c "echo '{ \"DAEMON_END_POINT\": \"http://${SNETD_PORT}:${SNETD_PORT}\", \
                    \"ETHEREUM_JSON_RPC_ENDPOINT\": \"https://kovan.infura.io\", \
                    \"IPFS_END_POINT\": \"http://ipfs.singularitynet.io:80\", \
                    \"REGISTRY_ADDRESS_KEY\": \"{{REGISTRY_ADDRESS}}\", \
                    \"PASSTHROUGH_ENABLED\": true, \
                    \"PASSTHROUGH_ENDPOINT\": \"http://localhost:7003\", \
-                   \"ORGANIZATION_NAME\": \"snet\", \
-                   \"SERVICE_NAME\": \"${SERVICE_NAME}\", \
+                   \"ORGANIZATION_ID\": \"snet\", \
+                   \"SERVICE_ID\": \"${SERVICE_NAME}\", \
                    \"LOG\": { \
                    \"LEVEL\": \"debug\", \
                    \"OUTPUT\": { \
