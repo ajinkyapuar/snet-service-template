@@ -4,6 +4,7 @@ ENV SINGNET_REPOS=/opt/singnet
 ENV GH_REPO_NAME={{GITHUB_REPOSITORY}}
 ENV SERVICES_FOLDER=${SINGNET_REPOS}/${GH_REPO_NAME}/{{SERVICES_FOLDER}}
 ENV SERVICE_NAME={{SERVICE_NAME}}
+ENV SNETD_HOST={{SERVICE_DAEMON_HOST}}
 ENV SNETD_PORT={{SERVICE_DAEMON_PORT}}
 ENV SNETD_CONFIG=snetd.config.json
 
@@ -37,7 +38,7 @@ RUN cd ${SINGNET_REPOS} && \
     git clone https://github.com/{{GITHUB_ACCOUNT}}/{{GITHUB_REPOSITORY}}.git
 
 RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
-    sh -c "echo '{ \"DAEMON_END_POINT\": \"http://54.203.198.53:${SNETD_PORT}\", \
+    sh -c "echo '{ \"DAEMON_END_POINT\": \"http://${${SNETD_PORT}}:${SNETD_PORT}\", \
                    \"ETHEREUM_JSON_RPC_ENDPOINT\": \"https://kovan.infura.io\", \
                    \"IPFS_END_POINT\": \"http://ipfs.singularitynet.io:80\", \
                    \"REGISTRY_ADDRESS_KEY\": \"{{REGISTRY_ADDRESS}}\", \

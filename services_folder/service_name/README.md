@@ -56,7 +56,7 @@ For example:
 ```
 $ cat snetd.config.json
 {
-   "DAEMON_END_POINT": "http://54.203.198.53:{{SERVICE_DAEMON_PORT}}",
+   "DAEMON_END_POINT": "http://{{SERVICE_DAEMON_HOST}}:{{SERVICE_DAEMON_PORT}}",
    "ETHEREUM_JSON_RPC_ENDPOINT": "https://kovan.infura.io",
    "IPFS_END_POINT": "http://ipfs.singularitynet.io:80",
    "REGISTRY_ADDRESS_KEY": "{{REGISTRY_ADDRESS}}",
