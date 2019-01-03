@@ -38,7 +38,7 @@ RUN cd ${SINGNET_REPOS} && \
     git clone https://github.com/{{GITHUB_ACCOUNT}}/{{GITHUB_REPOSITORY}}.git
 
 RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
-    sh -c "echo '{ \"DAEMON_END_POINT\": \"http://${SNETD_PORT}:${SNETD_PORT}\", \
+    sh -c "echo '{ \"DAEMON_END_POINT\": \"http://${SNETD_HOST}:${SNETD_PORT}\", \
                    \"ETHEREUM_JSON_RPC_ENDPOINT\": \"https://kovan.infura.io\", \
                    \"IPFS_END_POINT\": \"http://ipfs.singularitynet.io:80\", \
                    \"REGISTRY_ADDRESS_KEY\": \"{{REGISTRY_ADDRESS}}\", \
