@@ -1,42 +1,79 @@
-version: 2
-jobs:
-  deploy-{{SERVICE_NAME}}:
-    docker:
-      - image: circleci/python:3.6.6-node
-    working_directory: ~/singnet
-    environment:
-      SERVICE_NAME: {{SERVICE_NAME}}
-      SERVICE_RUN_SCRIPT: run_{{SERVICE_FILE_NAME}}_service.py
-      SERVICE_TEST_SCRIPT: test_{{SERVICE_FILE_NAME}}_service.py
-      SNETD_PORT: {{SERVICE_DAEMON_PORT}}
+commands:
+  bnd_cmd:
+    description: "Build and deploy SingularityNET Services"
+    parameters:
+      docker_image_name:
+        type: string
+        default: ""
+      docker_container_name:
+        type: string
+        default: ""
     steps:
       - run:
-          name: Deploy Over SSH
+          name: Build docker image
           command: |
-            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
-              nvidia-docker stop $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}} || true && nvidia-docker rename $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}} ${DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}}}_old || true
+            echo "==================================================== Configs ==================================================="
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+            echo            git_user  : ${CIRCLE_PROJECT_USERNAME}
+            echo            git_repo  : ${CIRCLE_PROJECT_REPONAME}
+            echo            git_branch: ${CIRCLE_BRANCH}
+            echo DOCKER_IMAGE_NAME    : ${DOCKER_IMAGE_NAME}
+            echo DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}
+            echo "================================================================================================================"
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+              nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME} || true && nvidia-docker rename ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
               nvidia-docker build \
-                -t $DOCKER_IMAGE_NAME_{{SERVICE_DOCKER_LASTNAME}} https://github.com/singnet/time-series-analysis.git#master:/{{SERVICES_FOLDER}}/$SERVICE_NAME
+                --build-arg git_owner=${CIRCLE_PROJECT_USERNAME} \
+                --build-arg git_repo=${CIRCLE_PROJECT_REPONAME} \
+                --build-arg git_branch=${CIRCLE_BRANCH} \
+                -t ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git#${CIRCLE_BRANCH}:/Services/gRPC/${SERVICE_NAME}
               nvidia-docker run --runtime=nvidia \
-                --name $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}} \
+                --name ${PROD_TAG}${DOCKER_CONTAINER_NAME} \
                 --restart unless-stopped \
-                -p $SNETD_PORT:$SNETD_PORT \
-                -di $DOCKER_IMAGE_NAME_{{SERVICE_DOCKER_LASTNAME}} sh -c "git pull;python3 $SERVICE_RUN_SCRIPT"
+                $([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "-p ${SNETD_PORT}:${SNETD_PORT}" || echo "") \
+                -di ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} ${SERVICE_RUN_COMMAND}
             EOF
       - run:
           name: Remove Old Docker Container
           command: |
-            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
-              nvidia-docker stop ${DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}}}_old || true && nvidia-docker rm ${DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}}}_old || true
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+            nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true && nvidia-docker rm ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
             EOF
       - run:
           name: Test local
           command: |
-            ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST << EOF
-              nvidia-docker exec -i $DOCKER_CONTAINER_NAME_{{SERVICE_DOCKER_LASTNAME}} python3 $SERVICE_TEST_SCRIPT auto
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+              nvidia-docker exec -i ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${SERVICE_TEST_COMMAND}
             EOF
+
+version: 2.1
+jobs:
+  deploy-{{SERVICE_NAME}}:
+    docker:
+    - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
+    environment:
+      SERVICE_NAME: {{SERVICE_NAME}}
+      SERVICE_RUN_COMMAND: {{SERVICE_RUN_COMMAND}}
+      SERVICE_TEST_COMMAND: {{SERVICE_TEST_COMMAND}}
+      SNETD_PORT: {{SERVICE_DAEMON_PORT}}
+    steps:
+      - bnd_cmd:
+          docker_image_name: {{DOCKER_IMAGE_NAME}}
+          docker_container_name: {{DOCKER_CONTAINER_NAME}}
 workflows:
-  version: 2
+  version: 2.1
   build-and-deploy:
     jobs:
       - deploy-{{SERVICE_NAME}}
