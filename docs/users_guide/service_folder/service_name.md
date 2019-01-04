@@ -21,7 +21,7 @@ It is part of our [{{REPOSITORY_TITLE}}](https://github.com/{{GITHUB_ACCOUNT}}/{
 
 {{SERVICE_DOCS_HOW_DOES_IT_WORK}}
 
-You can use this service from [SingularityNET DApp](http://alpha.singularitynet.io/).
+You can use this service from [SingularityNET DApp](http://beta.singularitynet.io/).
 
 You can also call the service from SingularityNET CLI (`snet`).
 

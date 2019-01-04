@@ -47,10 +47,7 @@ RUN cd ${SERVICES_FOLDER}/${SERVICE_NAME} && \
                    \"ORGANIZATION_ID\": \"snet\", \
                    \"SERVICE_ID\": \"${SERVICE_NAME}\", \
                    \"LOG\": { \
-                   \"LEVEL\": \"debug\", \
-                   \"OUTPUT\": { \
-                       \"TYPE\": \"stdout\" \
-                       } \
+                   \"LEVEL\": \"debug\" \
                    } \
                 }'" > ${SNETD_CONFIG}
 
